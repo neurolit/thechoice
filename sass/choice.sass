@@ -15,6 +15,7 @@ body
   height: 100%
   background: rgb(26, 25, 25)
   cursor: url('cursor-hand.png') 4 2
+  overflow: hidden
 
 body, textarea.cli
   font-family: 'profont'
@@ -84,9 +85,14 @@ textarea.cli
         background-color: rgb(42, 42, 42)
 
   .dialog
+    overflow-y: scroll
     border-top: 4px solid #1D1C1C
     height: 30%
 
     span.character
       color: #CE53A2
+
+    p
+      margin: 0
+      padding: 0
 
