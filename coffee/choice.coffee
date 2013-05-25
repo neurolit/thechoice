@@ -8,10 +8,13 @@ class Controls
 
   setupEvents: ->
     @button.click =>
-      coffee = @textarea.val()
+      input = @textarea.val()
+      input = input.split("\n").map((x) -> '  ' + x).join("\n")
+      code = "_thechoice = ->\n" + input + "\nreturn _thechoice()"
+      console.log code
 
       try
-        js = CoffeeScript.compile(coffee)
+        js = CoffeeScript.compile(code)
         result = eval(js)
         if result
           @dialog.push("Man", "Your answer is: #{result} - Are you confident?")
