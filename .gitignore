@@ -1,0 +1,7 @@
+
+# OSX shiznit
+.DS_store
+
+# Generated files
+.sass-cache/
+output/

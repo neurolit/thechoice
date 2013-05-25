@@ -1,0 +1,92 @@
+
+*
+  -webkit-box-sizing: border-box
+  -moz-box-sizing: border-box
+  box-sizing: border-box
+
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  -o-user-select: none
+  user-select: none
+
+body
+  height: 100%
+  background: rgb(26, 25, 25)
+  cursor: url('cursor-hand.png') 4 2
+
+body, textarea.cli
+  font-family: 'profont'
+  font-size: 18pt
+
+textarea.cli
+  position: absolute
+  background: black
+  border: none
+  width: 100%
+  height: 100%
+  top: 0
+  left: 0
+  color: #999
+
+  -webkit-user-select: text
+  -khtml-user-select: text
+  -moz-user-select: text
+  -ms-user-select: text
+  -o-user-select: text
+  user-select: text
+
+  &:active, &:hover, &:focus
+    border: none
+    outline: none
+    -moz-appearance: none
+
+  &:hover
+    cursor: url('cursor-caret.png') 16 16
+
+.dialog, textarea.cli
+  padding: 20px
+
+.frame
+  width: 800px
+  height: 600px
+  position: absolute
+  top: 50%
+  left: 50%
+  margin-left: -400px
+  margin-top: -300px
+
+  border: 4px solid #1D1C1C
+  border-radius: 5px
+  color: #999
+  box-shadow: 0 0 60px black
+  background-color: black
+
+  .scene
+    position: relative
+    height: 70%
+
+    .submit
+      width: 20%
+      text-align: center
+      position: absolute
+      padding: 10px 25px
+      border-top: 4px solid #1d1c1c
+      border-radius: 8px 0 0 0
+      bottom: 0
+      right: 0
+      border-left: 4px solid #1d1c1c
+      background-color: rgb(36, 35, 35)
+      color: rgb(90, 90, 90)
+
+      &:hover
+        background-color: rgb(42, 42, 42)
+
+  .dialog
+    border-top: 4px solid #1D1C1C
+    height: 30%
+
+    span.character
+      color: #CE53A2
+
