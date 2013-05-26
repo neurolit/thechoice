@@ -1,4 +1,27 @@
 
+PREFIX = """
+class Guard
+  constructor: (@lying) ->
+  
+  isDoor: (door) ->
+    @isTrue door.life
+
+  isTrue: (truth) ->
+    if @lying
+      !truth
+    else
+      truth
+
+class Door
+  constructor: (@life) ->
+
+left  = new Door(true)
+right = new Door(false)
+
+guard1 = new Guard(true)
+guard2 = new Guard(false)
+"""
+
 class Controls
 
   constructor: (@dialog) ->
@@ -20,13 +43,13 @@ class Controls
   submit: ->
     input = @editor.getValue()
     input = input.split("\n").map((x) -> '  ' + x).join("\n")
-    code = "_thechoice = ->\n" + input + "\nreturn _thechoice()"
+    code = PREFIX + "\n_thechoice = ->\n" + input + "\nreturn _thechoice()"
     console.log code
 
     try
       js = CoffeeScript.compile(code)
       result = eval(js)
-      if result
+      if result != undefined
         @dialog.push("Man", "Your answer is: #{result} - Are you confident?")
       else
         @dialog.push("Man", "This gives nothing, it's not good.")
