@@ -12,10 +12,47 @@
 
 - type: code
   text: >
-    Two doors: 'left', and 'right'. One of them leads to redemption.
-    One to eternal damnation. Two guards, 'ted' and 'larry'.
+    You will use the area below to answer our questions. Type
+    '@yes' if you have understood.
+  code: >
+    _condition = ->
+      context = {
+        yes: 'My existence does not matter. I am but a humble servant.'
+      }
+      response = _challenge context
+
+      if response == context.yes
+        _respond(1, 1)
+      else
+        _respond(0, 1)
+
+- type: clear
+
+- type: text
+  text: >
+    Good. Now, onto your first challenge.
+
+- type: text
+  text: >
+    Two doors: '@left', and '@right'. One of them leads to redemption.
+    One to eternal damnation. Two guards, '@ted' and '@larry'.
     One of them always lies, the other always tells the truth.
     You can ask the guards two questions: 'isDoor' and 'isTrue'.
+
+- type: text
+  text: >
+    For example, if you wanted to ask @ted if he thinks the door to
+    the left leads to redemption, you could type '@ted.isDoor(@left)'.
+
+- type: text
+  text: >
+    Of course, since you don't know who is lying, that would be futile.
+
+- type: code
+  text: >
+    Now listen closely: I want you to write a program that evaluates
+    to true if the right door is.. the right one, and false if the right
+    door leads to damnation. Go on, try it!
   code: |
     class Guard
       constructor: (@lying) ->
@@ -45,10 +82,10 @@
           }
           response = _challenge context
 
-          if i == response
+          if context.right.life == response
             successes += 1
 
-      return { successes: successes, total: 4 }
+      _respond(successes, 4)
  
 - type: text
   text: >

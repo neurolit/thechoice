@@ -1,6 +1,9 @@
 PREFIX = """
 _challenge = (context) ->
   _usercode.apply(context)
+
+_respond = (successes, total) ->
+  { successes: successes, total: total }
 """
 
 class Controls
@@ -18,6 +21,7 @@ class Controls
     @editor.setTheme("ace/theme/tomorrow_night")
     @editor.setFontSize(16)
     @editor.renderer.setShowGutter(false)
+    @editor.renderer.updateCursor("url('cursor-caret.png')")
     @editor.getSession().setMode("ace/mode/coffee")
 
   fetchCards: ->
@@ -37,6 +41,10 @@ class Controls
     @say(@card.text)
 
     switch @card.type
+      when 'clear'
+        @dialog.clear()
+        @editor.setValue('')
+        @nextCard()
       when 'code'
         console.log 'We have a code card!'
 
@@ -55,7 +63,7 @@ class Controls
     console.log 'submitCode!'
     input = @editor.getValue().trim()
     if input == ''
-      @say 'Well? Code something!'
+      @say 'Well? Type something!'
       return
 
     input = input.split("\n").map((x) -> '  ' + x).join("\n")
@@ -66,10 +74,12 @@ class Controls
       js = CoffeeScript.compile(code)
       result = eval(js)
 
-      if result.successes < result.total
+      if result.successes == result.total
+        @nextCard()
+      else if result.total > 1
         @say "Your answer only works #{result.successes / result.total * 100.0}% of the time. Try again."
       else
-        @say "Good work!"
+        @say "Your answer is unsatisfactory. Try again."
     catch error
       @say error.message + " - Try again."
     finally
@@ -90,6 +100,9 @@ class Dialog
     @element.append(line)
     line.fadeIn()
     @element.scrollTop(@element[0].scrollHeight)
+
+  clear: ->
+    @element.children().fadeOut().remove()
 
 $ ->
   dialog = new Dialog()

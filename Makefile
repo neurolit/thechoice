@@ -1,7 +1,7 @@
 
-.PHONY: haml sass coffee resources
+.PHONY: build haml sass coffee resources deploy
 
-all: clean haml sass coffee resources
+build: clean haml sass coffee resources
 	@echo "Game built!"
 
 haml:
@@ -23,4 +23,7 @@ resources:
 clean:
 	mkdir -p output
 	rm -rf output/*
+
+deploy: build
+	scp -r output amos@taft:/srv/apps/production/thechoice.amos.me/
 
