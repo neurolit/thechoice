@@ -1,0 +1,57 @@
+- type: text
+  text: >
+    Welcome, subject #2304. You've been randomly selected for an
+    aptitude test of the highest importance.
+
+- type: text
+  text: >
+    You will be tested for your capacity to code and to think
+    logically. As you very well know, the recent regulation code
+    dictates that all human specimens be regularly checked for
+    programming abilities, as a matter of survival.
+
+- type: code
+  text: >
+    Two doors: 'left', and 'right'. One of them leads to redemption.
+    One to eternal damnation. Two guards, 'ted' and 'larry'.
+    One of them always lies, the other always tells the truth.
+    You can ask the guards two questions: 'isDoor' and 'isTrue'.
+  code: |
+    class Guard
+      constructor: (@lying) ->
+      
+      isDoor: (door) ->
+        @isTrue door.life
+
+      isTrue: (truth) ->
+        if @lying
+          !truth
+        else
+          truth
+
+    class Door
+      constructor: (@life) ->
+
+    _condition = ->
+      successes = 0
+
+      for i in [0, 1]
+        for j in [0, 1]
+          context = {
+            left:  new Door(i == 0)
+            right: new Door(i == 1)
+            ted:   new Guard(j == 0)
+            larry: new Guard(j == 1)
+          }
+          response = _challenge context
+
+          if i == response
+            successes += 1
+
+      return { successes: successes, total: 4 }
+ 
+- type: text
+  text: >
+    Good work, soldier! Let's see if you're so smart with the next
+    problem.
+

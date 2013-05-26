@@ -1,33 +1,17 @@
-
 PREFIX = """
-class Guard
-  constructor: (@lying) ->
-  
-  isDoor: (door) ->
-    @isTrue door.life
-
-  isTrue: (truth) ->
-    if @lying
-      !truth
-    else
-      truth
-
-class Door
-  constructor: (@life) ->
-
-left  = new Door(true)
-right = new Door(false)
-
-guard1 = new Guard(true)
-guard2 = new Guard(false)
+_challenge = (context) ->
+  _usercode.apply(context)
 """
 
 class Controls
 
   constructor: (@dialog) ->
+    @index = 0
+    @card = null
+
     @button = $('.submit')
     @setupEditor()
-    @setupEvents()
+    @fetchCards()
 
   setupEditor: ->
     @editor = ace.edit("editor")
@@ -36,27 +20,63 @@ class Controls
     @editor.renderer.setShowGutter(false)
     @editor.getSession().setMode("ace/mode/coffee")
 
+  fetchCards: ->
+    jsyaml = window.jsyaml
+    $.get 'cards.yml', (data) =>
+      @cards = jsyaml.load(data)
+      console.log "Cards loaded!"
+      @showCard()
+      @setupEvents()
+
+  nextCard: ->
+    @index += 1
+    @showCard()
+
+  showCard: ->
+    @card = @cards[@index]
+    @say(@card.text)
+
+    switch @card.type
+      when 'code'
+        console.log 'We have a code card!'
+
   setupEvents: ->
     @button.click =>
       @submit()
 
   submit: ->
-    input = @editor.getValue()
+    switch @card.type
+      when 'text'
+        @nextCard()
+      when 'code'
+        @submitCode()
+
+  submitCode: ->
+    console.log 'submitCode!'
+    input = @editor.getValue().trim()
+    if input == ''
+      @say 'Well? Code something!'
+      return
+
     input = input.split("\n").map((x) -> '  ' + x).join("\n")
-    code = PREFIX + "\n_thechoice = ->\n" + input + "\nreturn _thechoice()"
-    console.log code
+    code = PREFIX + "\n_usercode = ->\n" + input + "\n" + @card.code + "\nreturn _condition()"
+    console.log { code: code }
 
     try
       js = CoffeeScript.compile(code)
       result = eval(js)
-      if result != undefined
-        @dialog.push("Man", "Your answer is: #{result} - Are you confident?")
+
+      if result.successes < result.total
+        @say "Your answer only works #{result.successes / result.total * 100.0}% of the time. Try again."
       else
-        @dialog.push("Man", "This gives nothing, it's not good.")
+        @say "Good work!"
     catch error
-      @dialog.push("Man", error.message + " - Try again.")
+      @say error.message + " - Try again."
     finally
       @editor.focus()
+
+  say: (msg) ->
+    @dialog.push("Man", msg)
         
 
 class Dialog
@@ -74,10 +94,4 @@ class Dialog
 $ ->
   dialog = new Dialog()
   controls = new Controls(dialog)
-
-  dialog.push("Man", "Welcome, subject #20394. You have been brought here to pass the
-    most important test in your life.")
-  dialog.push("Man", "If you have understood the instructions, type 'Yes.'")
-  dialog.push("Man", "Not 'yes', not 'yes.', 'Yes.'.")
-  console.log 'We are live!'
 
