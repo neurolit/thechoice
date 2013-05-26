@@ -1,32 +1,48 @@
 - type: text
   text: >
-    Welcome, subject #2304. You've been randomly selected for an
-    aptitude test of the highest importance.
+    Welcome, subject #2304.
+  
+- type: text
+  text: >
+    You have been randomly selected for an aptitude test of the highest
+    importance. You will be tested for your capacity to code and to think
+    logically. 
 
 - type: text
   text: >
-    You will be tested for your capacity to code and to think
-    logically. As you very well know, the recent regulation code
-    dictates that all human specimens be regularly checked for
-    programming abilities, as a matter of survival.
+    As you very well know, the recent regulation code dictates that all human
+    specimens be regularly checked for programming abilities, as a matter of
+    survival.
+
+- type: text
+  text: >
+    This test is not a test. Any failing human will be removed from the
+    active society and sent to silicon mines immediately. Do not disappoint.
 
 - type: code
   text: >
-    You will use the area below to answer our questions. Type
-    '@yes' if you have understood.
-  code: >
-    _condition = ->
-      context = {
-        yes: 'My existence does not matter. I am but a humble servant.'
-      }
-      response = _challenge context
+    If you have understood the instructions, type: answer 'yes'
+  code: |
+    _question = new SimpleQuestion {
+      correct: [ 'yes' ]
+      smartass: [ 'no' ]
+    }
 
-      if response == context.yes
-        _respond(1, 1)
-      else
-        _respond(0, 1)
+    answer = (x) ->
+      _question.answer(x)
+
+    _condition = ->
+      _challenge {}
+      _question.react()
+
+- type: text
+  text: Good.
 
 - type: clear
+
+- type: text
+  text: >
+    From now on, any answer you give us will be given in this form.
 
 - type: text
   text: >
