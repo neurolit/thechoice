@@ -126,9 +126,41 @@
 
 - type: text
   text: >
-    Good. Now, onto your first challenge.
+    Good.
 
 - type: clear
+
+- type: text
+  text: >
+    We shall begin testing your programming abilities soon.
+
+- type: text
+  text: >
+    In the meantime, you are required to answer the following question.
+
+- type: code
+  text: >
+    The more you have it, the less you see. What is it?
+  code: |
+    _question = new SimpleQuestion {
+      correct: [ 'darkness', 'the dark', 'dark' ]
+      smartass: [ 'blindness' ]
+    }
+
+    answer = (x) -> _question.answer(x)
+
+    _condition = ->
+      _challenge {}
+      _question.react()
+
+- type: text
+  text: >
+    That is correct.
+
+- type: text
+  text: >
+    Which, after all, is expected of you. Darkness is a familiar concept
+    to you humans, with your puny sensorial devices.
 
 - type: text
   text: >
