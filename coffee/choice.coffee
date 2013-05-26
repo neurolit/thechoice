@@ -3,27 +3,37 @@ class Controls
 
   constructor: (@dialog) ->
     @button = $('.submit')
-    @textarea = $('textarea.cli')
+    @setupEditor()
     @setupEvents()
+
+  setupEditor: ->
+    @editor = ace.edit("editor")
+    @editor.setTheme("ace/theme/tomorrow_night")
+    @editor.setFontSize(16)
+    @editor.renderer.setShowGutter(false)
+    @editor.getSession().setMode("ace/mode/coffee")
 
   setupEvents: ->
     @button.click =>
-      input = @textarea.val()
-      input = input.split("\n").map((x) -> '  ' + x).join("\n")
-      code = "_thechoice = ->\n" + input + "\nreturn _thechoice()"
-      console.log code
+      @submit()
 
-      try
-        js = CoffeeScript.compile(code)
-        result = eval(js)
-        if result
-          @dialog.push("Man", "Your answer is: #{result} - Are you confident?")
-        else
-          @dialog.push("Man", "This gives nothing, it's not good.")
-      catch error
-        @dialog.push("Man", error.message + " - Try again.")
-      finally
-        @textarea.focus()
+  submit: ->
+    input = @editor.getValue()
+    input = input.split("\n").map((x) -> '  ' + x).join("\n")
+    code = "_thechoice = ->\n" + input + "\nreturn _thechoice()"
+    console.log code
+
+    try
+      js = CoffeeScript.compile(code)
+      result = eval(js)
+      if result
+        @dialog.push("Man", "Your answer is: #{result} - Are you confident?")
+      else
+        @dialog.push("Man", "This gives nothing, it's not good.")
+    catch error
+      @dialog.push("Man", error.message + " - Try again.")
+    finally
+      @editor.focus()
         
 
 class Dialog

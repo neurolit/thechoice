@@ -2,16 +2,16 @@
 %title The Choice
 
 %link{:href=> 'choice.css', :rel => 'stylesheet'}
-%link{:href=> 'profont.css', :rel => 'stylesheet'}
 
 %script{:src => 'coffee-script.js'}
 %script{:src => 'jquery.js'}
+%script{:src => 'http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js'}
 %script{:src => 'choice.js'}
 
 .frame
+  .dialog
   .scene
-    %textarea.cli
+    .cli#editor
 
     .submit
       Next &raquo;
-  .dialog

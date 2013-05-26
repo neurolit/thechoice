@@ -4,12 +4,12 @@
   -moz-box-sizing: border-box
   box-sizing: border-box
 
-  -webkit-user-select: none
-  -khtml-user-select: none
-  -moz-user-select: none
-  -ms-user-select: none
-  -o-user-select: none
-  user-select: none
+  #-webkit-user-select: none
+  #-khtml-user-select: none
+  #-moz-user-select: none
+  #-ms-user-select: none
+  #-o-user-select: none
+  #user-select: none
 
 body
   height: 100%
@@ -17,36 +17,22 @@ body
   cursor: url('cursor-hand.png') 4 2
   overflow: hidden
 
-body, textarea.cli
-  font-family: 'profont'
-  font-size: 18pt
+body
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace
+  font-size: 16px
 
-textarea.cli
+.cli
   position: absolute
-  background: black
   border: none
   width: 100%
   height: 100%
   top: 0
   left: 0
-  color: #999
-
-  -webkit-user-select: text
-  -khtml-user-select: text
-  -moz-user-select: text
-  -ms-user-select: text
-  -o-user-select: text
-  user-select: text
-
-  &:active, &:hover, &:focus
-    border: none
-    outline: none
-    -moz-appearance: none
 
   &:hover
     cursor: url('cursor-caret.png') 16 16
 
-.dialog, textarea.cli
+.dialog
   padding: 20px
 
 .frame
@@ -86,7 +72,7 @@ textarea.cli
 
   .dialog
     overflow-y: scroll
-    border-top: 4px solid #1D1C1C
+    border-bottom: 4px solid #1D1C1C
     height: 30%
 
     span.character
