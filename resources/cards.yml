@@ -4,20 +4,25 @@
   
 - type: text
   text: >
-    You have been randomly selected for an aptitude test of the highest
-    importance. You will be tested for your capacity to code and to think
-    logically. 
+    You have been selected for a routine aptitude test.
 
 - type: text
   text: >
-    As you very well know, the recent regulation code dictates that all human
-    specimens be regularly checked for programming abilities, as a matter of
-    survival.
+    As you surely know, the recent regulation code dictates that all human
+    specimens be regularly checked for basic survival abilities.
+    
+- type: text
+  text: >
+    Your ability to perform logic will be evaluated. You will be given a fair
+    shot at remaining an active member of society.
 
 - type: text
   text: >
-    This test is not a test. Any failing human will be removed from the
-    active society and sent to silicon mines immediately. Do not disappoint.
+    This test is not a test.
+    
+- type: text
+  text: >
+    Do not disappoint.
 
 - type: code
   text: >
@@ -28,8 +33,7 @@
       smartass: [ 'no' ]
     }
 
-    answer = (x) ->
-      _question.answer(x)
+    answer = (x) -> _question.answer(x)
 
     _condition = ->
       _challenge {}
@@ -38,15 +42,93 @@
 - type: text
   text: Good.
 
-- type: clear
-
 - type: text
   text: >
     From now on, any answer you give us will be given in this form.
 
+- type: clear
+
+- type: text
+  text: >
+    Here is your first assignment.
+
+- type: code
+  text: >
+    It is more useless than you. What is it?
+  code: |
+    _question = new SimpleQuestion {
+      correct: [ 'nothing' ]
+      smartass: [ 'me' ]
+    }
+
+    answer = (x) -> _question.answer(x)
+
+    _condition = ->
+      _challenge {}
+      _question.react()
+
+- type: text
+  text: >
+    That's right! Nothing is more useless than you. It is good to hear
+    that you know your place.
+
+- type: clear
+
+- type: text
+  text: >
+    Now for something harder.
+
+- type: code
+  text: >
+    There is a certain crime, that if it is attempted, is punishable,
+    but if it is committed, is not punishable. What is the crime?
+  code: |
+    _question = new SimpleQuestion {
+      correct: [ 'suicide' ]
+      smartass: []
+    }
+
+    answer = (x) -> _question.answer(x)
+
+    _condition = ->
+      _challenge {}
+      _question.react()
+
+- type: clear
+
+- type: text
+  text: >
+    I see you are in the right mindset.
+
+- type: text
+  text: >
+    However, do not delude yourself into thinking that this could be
+    an escape to your evaluation.
+
+- type: text
+  text: >
+    In other words: resistance is futile.
+
+- type: code
+  text: >
+    Answer 'yes' if you understand.
+  code: |
+    _question = new SimpleQuestion {
+      correct: [ 'yes' ]
+      smartass: [ 'no' ]
+    }
+
+    answer = (x) -> _question.answer(x)
+
+    _condition = ->
+      _challenge {}
+      _question.react()
+
 - type: text
   text: >
     Good. Now, onto your first challenge.
+
+- type: clear
 
 - type: text
   text: >

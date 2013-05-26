@@ -30,15 +30,16 @@ class Controls
 
   showCard: ->
     @card = @cards[@index]
-    @say(@card.text)
-
     switch @card.type
       when 'clear'
         @dialog.clear()
         @editor.setValue('')
         @nextCard()
       when 'code'
+        @put(@card.text)
         @editor.focus()
+      when 'text'
+        @say(@card.text)
 
   setupEvents: ->
     @button.click =>
@@ -88,6 +89,9 @@ class Controls
 
   say: (msg) ->
     @dialog.push("Man", msg)
+
+  put: (msg) ->
+    @dialog.instruct(msg)
         
 
 class Dialog
@@ -101,12 +105,20 @@ class Dialog
 
   push: (who, what) ->
     line = $("<p><span class='character'>#{who}: </span>#{what}</p>")
+    @_append(line)
+
+    if @sound
+      speak(what, { pitch: 30, speed: 200 })
+
+  instruct: (what) ->
+    line = $("<p class='instructions'>#{what}</p>")
+    @_append(line)
+
+  _append: (line) ->
     line.hide()
     @element.append(line)
     line.fadeIn()
     @element.scrollTop(@element[0].scrollHeight)
-    if @sound
-      speak(what)
 
   clear: ->
     @element.children().fadeOut().remove()
