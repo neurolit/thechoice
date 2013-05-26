@@ -95,13 +95,18 @@ class Dialog
   constructor: ->
     @element = $('.dialog')
 
+    @sound = true
+    if /\?nosound/.test window.location.search
+      @sound = false
+
   push: (who, what) ->
     line = $("<p><span class='character'>#{who}: </span>#{what}</p>")
     line.hide()
     @element.append(line)
     line.fadeIn()
     @element.scrollTop(@element[0].scrollHeight)
-    speak(what)
+    if @sound
+      speak(what)
 
   clear: ->
     @element.children().fadeOut().remove()
