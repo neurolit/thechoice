@@ -46,7 +46,7 @@ class Controls
         @editor.setValue('')
         @nextCard()
       when 'code'
-        console.log 'We have a code card!'
+        @editor.focus()
 
   setupEvents: ->
     @button.click =>
@@ -100,6 +100,7 @@ class Dialog
     @element.append(line)
     line.fadeIn()
     @element.scrollTop(@element[0].scrollHeight)
+    speak(what)
 
   clear: ->
     @element.children().fadeOut().remove()
