@@ -15,10 +15,6 @@
   text: >
     Your ability to perform logic will be evaluated. You will be given a fair
     shot at remaining an active member of society.
-
-- type: text
-  text: >
-    This test is not a test.
     
 - type: text
   text: >
@@ -27,6 +23,8 @@
 - type: code
   text: >
     If you have understood the instructions, type: answer 'yes'
+  hints:
+    - "You have to type this exactly: answer 'yes', and click Next."
   code: |
     _question = new SimpleQuestion {
       correct: [ 'yes' ]
@@ -52,13 +50,31 @@
   text: >
     Here is your first assignment.
 
+- type: text
+  text: >
+    Remember that your answer has to be given in the form of code.
+
+- type: text
+  text: >
+    If you are struggling, hints will be given to you.
+
+- type: text
+  text: >
+    Remember that you are of little value to the intergalactic government.
+
+- type: text
+  text: >
+    Good luck.
+
 - type: code
   text: >
     It is more useless than you. What is it?
+  hints:
+    - The answer fits in one word.
   code: |
     _question = new SimpleQuestion {
-      correct: [ 'nothing' ]
-      smartass: [ 'me' ]
+      correct: [ 'nothing', 'nobody', 'null', 'nil', 'zilch', 'nada', '' ]
+      smartass: [ 'me', 'you', 'man', 'amos', 'nddrylliog' ]
     }
 
     answer = (x) -> _question.answer(x)
@@ -82,6 +98,9 @@
   text: >
     There is a certain crime, that if it is attempted, is punishable,
     but if it is committed, is not punishable. What is the crime?
+  hints:
+    - Some say that crime involves courage, others say it's cowardice.
+    - The crime in question involves only one person.
   code: |
     _question = new SimpleQuestion {
       correct: [ 'suicide' ]

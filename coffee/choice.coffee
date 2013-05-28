@@ -3,6 +3,8 @@ class Controls
   constructor: (@dialog) ->
     @index = 0
     @card = null
+    @tries = 0
+    @hintNumber = 0
 
     @button = $('.submit')
     @setupEditor()
@@ -35,21 +37,28 @@ class Controls
             return
 
   nextCard: ->
+    @tries = 0
+    @hintNumber = 0
     @index += 1
     @showCard()
 
   showCard: ->
     @card = @cards[@index]
+    if @card.type == 'code'
+      $('.scene').addClass('code')
+    else
+      $('.scene').removeClass('code')
+
     switch @card.type
       when 'clear'
         @dialog.clear()
         @editor.setValue('')
         @nextCard()
       when 'code'
-        @put(@card.text)
+        @put @card.text
         @editor.focus()
       when 'text'
-        @say(@card.text)
+        @say @card.text
       when 'save'
         @nextCard()
 
@@ -69,6 +78,7 @@ class Controls
     input = @editor.getValue().trim()
     if input == ''
       @say 'Well? Type something!'
+      @fail()
       return
 
     input = input.split("\n").map((x) -> '  ' + x).join("\n")
@@ -83,6 +93,8 @@ class Controls
         @say result.message
         if result.advance == true
           @nextCard()
+        else
+          @fail()
         return
 
       if result.successes == result.total
@@ -90,14 +102,28 @@ class Controls
       else if result.total > 1
         if result.successes == 0
           @say "Your answer never works. Try again."
+          @fail()
         else
           @say "Your answer only works #{result.successes / result.total * 100.0}% of the time. Try again."
+          @fail()
       else
         @say "Your answer is unsatisfactory. Try again."
+        @fail()
     catch error
       @say error.message + " - Try again."
+      @fail()
     finally
       @editor.focus()
+
+  fail: ->
+    @tries++
+    if @tries >= (@hintNumber + 1) * 3
+      @showHint()
+
+  showHint: ->
+    @hintNumber++
+    if @card.hints && @card.hints.length >= @hintNumber
+      @say "Here's a hint. #{@card.hints[@hintNumber - 1]}"
 
   say: (msg) ->
     @dialog.push("Man", msg)
@@ -116,15 +142,18 @@ class Dialog
       @sound = false
 
   push: (who, what) ->
+    @speak what
     line = $("<p><span class='character'>#{who}: </span>#{what}</p>")
     @_append(line)
 
-    if @sound
-      speak(what, { pitch: 30, speed: 200 })
-
   instruct: (what) ->
+    @speak what
     line = $("<p class='instructions'>#{what}</p>")
     @_append(line)
+
+  speak: (what) ->
+    if @sound
+      speak(what, { amplitude: 150, pitch: 10, speed: 190 })
 
   _append: (line) ->
     line.hide()
@@ -156,7 +185,9 @@ class SimpleQuestion
     @answered = false
     @smartass = false
 
-  answer: (text) ->
+  answer: (raw) ->
+    text = raw.toLowerCase().trim()
+
     @answered = true
 
     if @definition.correct.indexOf(text) != -1
