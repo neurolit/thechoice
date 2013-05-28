@@ -61,6 +61,13 @@ class Controls
         @say @card.text
       when 'save'
         @nextCard()
+      when 'end'
+        text = """
+        That's it for now. Tell me what you think about it
+        by <a href="https://twitter.com/intent/tweet?text=@nddrylliog I just played The Choice and here's what I think: " target="_blank">sending me a tweet.</a>
+        Thanks for playing!
+        """
+        @silent text
 
   setupEvents: ->
     @button.click =>
@@ -130,6 +137,9 @@ class Controls
 
   put: (msg) ->
     @dialog.instruct(msg)
+
+  silent: (msg) ->
+    @dialog.silent(msg)
         
 
 class Dialog
@@ -148,6 +158,10 @@ class Dialog
 
   instruct: (what) ->
     @speak what
+    line = $("<p class='instructions'>#{what}</p>")
+    @_append(line)
+
+  silent: (what) ->
     line = $("<p class='instructions'>#{what}</p>")
     @_append(line)
 
@@ -179,7 +193,6 @@ _retort = (message) ->
   { message: message }
 
 class SimpleQuestion
-
   constructor: (@definition) ->
     @correct = false
     @answered = false
@@ -209,5 +222,54 @@ class SimpleQuestion
     else
       _retort 'You did not answer anything.'
 
+class Showstopper extends Error
+  constructor: (@message) ->
+
+class Log
+  constructor: ->
+    @entries = []
+    @failed = false
+    @succeded = false
+
+  append: (entry) ->
+    @entries.push entry
+
+  fail: ->
+    @failed = true
+    @entries.push 'You failed.'
+    throw new Showstopper('fail')
+
+  succeed: ->
+    @succeeded = true
+    @entries.push 'You succeeded.'
+    throw new Showstopper('success')
+
+  run: (code) ->
+    try
+      code()
+    catch e
+      if e instanceof Showstopper
+        return @summary()
+      else
+        # re-throw!!!!!!!
+        throw e
+
+    # No showstopper, we probably lost, but we still want to
+    # know what happened.
+    @summary()
+
+  summary: ->
+    message = @entries.join(" ")
+    if @failed || !@succeeded
+      {
+        message: message
+        advance: false
+      }
+    else
+      {
+        message: message
+        advance: true
+      }
+    
 """
 

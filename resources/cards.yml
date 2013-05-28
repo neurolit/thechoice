@@ -232,12 +232,67 @@
 - type: text
   text: >
     Good.
- 
-- type: text
+
+- type: save
+  code: vodka
+
+- type: text 
   text: >
-    That's it for now. Tell me what you think about it
-    by <a href="https://twitter.com/intent/tweet?text=@nddrylliog I just played The Choice and here's what I think: " target="_blank">sending me a tweet.</a>
-    Thanks for playing!
+    For the next exercise, you will have two doors: @left and @right.
+    Try entering either and see what happens.
+
+- type: code 
+  text: >
+    Make your way to the next level.
+  hints:
+    - "Your code can span multiple lines, that is: you can take several actions."
+    - "You can unlock doors with the command `unlock`."
+  code: |
+    class Door
+      constructor: (@log, @name) ->
+        @locked = false
+        @entered = false
+        @trapped = false
+
+      unlock: ->
+        @log.append "You unlocked door #{@name}."
+        @locked = false
+
+      enter: ->
+        if @locked
+          @log.append "You tried to enter door #{@name}, but it was locked."
+        else if @trapped
+          @log.append "Door #{@name} was trapped, and you died horribly."
+          @log.fail()
+        else
+          @log.append "You entered door #{@name}."
+          @log.succeed()
+          @entered = true
+
+    enter = (door) ->
+      door.enter()
+
+    unlock = (door) ->
+      door.unlock()
+
+    _condition = ->
+      log = new Log()
+
+      left = new Door(log, '@left')
+      left.locked = true
+
+      right = new Door(log, '@right')
+      right.trapped = true
+
+      return log.run =>
+        context = {
+            left: left
+            right: right
+        }      
+        _challenge context
+
+- type: end
+  text: >
 
 - type: stopper
 
