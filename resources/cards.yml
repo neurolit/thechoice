@@ -213,6 +213,17 @@
 - type: text
   text: >
     Good.
+ 
+- type: text
+  text: >
+    That's it for now. Tell me what you think about it
+    by <a href="https://twitter.com/intent/tweet?text=@nddrylliog I just played The Choice and here's what I think: " target="_blank">sending me a tweet.</a>
+    Thanks for playing!
+
+- type: stopper
+
+- type: text
+  text: >
 
 - type: text
   text: >
@@ -268,9 +279,4 @@
             successes += 1
 
       _respond(successes, 4)
- 
-- type: text
-  text: >
-    Good work, soldier! Let's see if you're so smart with the next
-    problem.
 
