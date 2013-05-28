@@ -162,6 +162,58 @@
     Which, after all, is expected of you. Darkness is a familiar concept
     to you humans, with your puny sensorial devices.
 
+- type: save
+  code: bombardier
+
+- type: clear
+
+- type: text
+  text: >
+    You have now entered the programming part of your evaluation.
+
+- type: text
+  text: >
+    Follow instructions very carefully, as any discrepancies could 
+    result in intergalactic instability.
+
+- type: text
+  text: >
+    For the purpose of this exercise, we have summoned an
+    interdimensional door. Its name is '@door'.
+
+- type: text
+  text: >
+    To pass to the next level, enter the door. You can enter
+    doors by doing: 'enter @door'
+
+- type: code
+  text: Enter the door.
+  code: |
+    class Door
+      constructor: ->
+        @entered = false
+
+      enter: ->
+        @entered = true
+
+    enter = (door) ->
+      door.enter()
+
+    _condition = ->
+      context = {
+          door: new Door()
+      }      
+      response = _challenge context
+
+      unless context.door.entered
+        return _retort 'You did not enter the door.'
+
+      _respond(1, 1)
+
+- type: text
+  text: >
+    Good.
+
 - type: text
   text: >
     Two doors: '@left', and '@right'. One of them leads to redemption.

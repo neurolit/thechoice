@@ -21,8 +21,18 @@ class Controls
     $.get 'cards.yml', (data) =>
       @cards = jsyaml.load(data)
       console.log "Cards loaded!"
-      @showCard()
       @setupEvents()
+
+      if window.location.hash == ""
+        @showCard()
+      else
+        code = window.location.hash.substring(1)
+        # load cheat
+        for card, i in @cards
+          if card.type == 'save' && card.code == code
+            @index = i
+            @showCard()
+            return
 
   nextCard: ->
     @index += 1
@@ -40,6 +50,8 @@ class Controls
         @editor.focus()
       when 'text'
         @say(@card.text)
+      when 'save'
+        @nextCard()
 
   setupEvents: ->
     @button.click =>
