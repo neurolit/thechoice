@@ -8,7 +8,7 @@
 
 - type: text
   text: >
-    As you surely know, the recent regulation code dictates that all human
+    As you surely know, the regulation code dictates that all human
     specimens be regularly checked for basic survival abilities.
     
 - type: text
@@ -22,7 +22,7 @@
 
 - type: code
   text: >
-    If you have understood the instructions, type: answer 'yes'
+    Communicate your understanding by typing: answer 'yes'
   hints:
     - "You have to type this exactly: answer 'yes', and click Next."
   code: |
@@ -38,11 +38,8 @@
       _question.react()
 
 - type: text
-  text: Good.
-
-- type: text
   text: >
-    From now on, any answer you give us will be given in this form.
+    Good. From now on, any answer shall be given in this form.
 
 - type: clear
 
@@ -221,7 +218,7 @@
 
 - type: text
   text: >
-    Should you fail, the level will be reset. You can take multiple actions:
+    Should you fail, the stage will be reset. You can take multiple actions:
     just write them on several lines.
 
 - type: code 
@@ -272,6 +269,135 @@
             right: right
         }      
         _challenge context
+
+- type: text
+  text: >
+    By now, you have understood the importance of order. Order is what rules
+    everything. Do not get cocky: you are far from done with this evaluation.
+
+- type: text
+  text: >
+    For your information, you have so far been classified as slower, dumber,
+    and even more clueless than the other applicants.
+
+- type: text
+  text: >
+    However, according to the regulation code, we are required to make you go
+    through the whole test before removing you from active life and sending
+    you to a silicon mine.
+
+- type: text
+  text: >
+    That said, it is in your interest to take the following assignments very
+    seriously.
+
+- type: clear
+
+- type: save
+  code: redbull
+
+- type: text
+  text: >
+    The next assignment will require a new construct: conditionals.
+
+- type: text
+  text: >
+    You will find below an example of conditional.
+  sample: |
+    if human
+      worthless
+    else
+      worthy
+
+- type: text
+  text: >
+    Your code must now be satisfying in every possible case.
+
+- type: text
+  text: >
+    The stage for this assignment contains two doors as well. However,
+    each possible combination will be tested against your code.
+
+- type: text
+  text: >
+    For your code to work no matter which door is trapped, @left
+    or @right, you may ask questions to the guard, @xzoor.
+
+- type: text
+  text: >
+    To ask the guard if a door is trapped, simply do:
+    @xzoor.isTrapped(door).
+
+- type: code 
+  text: >
+    Write code that always enters the correct door, no matter which one
+    is trapped.
+  code: |
+    class Guard
+      constructor: (@log, @name) ->
+
+      isTrapped: (door) ->
+        @log.append "You asked #{@name} if door #{door.name} was trapped."
+        if door.trapped
+          @log.append "He said yes."
+        else
+          @log.append "He said no."
+        door.trapped
+
+    class Door
+      constructor: (@log, @name) ->
+        @locked = false
+        @entered = false
+        @trapped = false
+
+      unlock: ->
+        @log.append "You unlocked door #{@name}."
+        @locked = false
+
+      enter: ->
+        if @locked
+          @log.append "You tried to enter door #{@name}, but it was locked."
+        else if @trapped
+          @log.append "Door #{@name} was trapped, and you died horribly."
+          @log.fail()
+        else
+          @log.append "You entered door #{@name}."
+          @log.succeed()
+          @entered = true
+
+    enter = (door) ->
+      door.enter()
+
+    unlock = (door) ->
+      door.unlock()
+
+    _condition = ->
+      for i in [0, 1]
+        log = new Log()
+
+        left = new Door(log, '@left')
+        right = new Door(log, '@right')
+        xzoor = new Guard(log, 'xzoor')
+
+        if i == 0
+          left.locked = true
+          right.trapped = true
+        else
+          right.locked = true
+          left.trapped = true
+
+        response = log.run =>
+          context = {
+              left: left
+              right: right
+              xzoor: xzoor
+          }      
+          _challenge context
+
+        unless log.successful()
+          return response
+
+      { message: "Your code is correct.", advance: true }
 
 - type: end
   text: >

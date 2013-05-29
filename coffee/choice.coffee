@@ -59,6 +59,8 @@ class Controls
         @editor.focus()
       when 'text'
         @say @card.text
+        if @card.sample
+          @editor.setValue(@card.sample)
       when 'save'
         @nextCard()
       when 'end'
@@ -257,6 +259,9 @@ class Log
     # No showstopper, we probably lost, but we still want to
     # know what happened.
     @summary()
+
+  successful: ->
+    !@failed && @succeded
 
   summary: ->
     message = @entries.join(" ")
