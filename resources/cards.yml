@@ -20,9 +20,60 @@
   text: >
     Do not disappoint.
 
+- type: clear
+
+- type: text
+  text: >
+    For the purpose of this evaluation, you will be entering code in the
+    area below. 
+
+- type: text
+  text: >
+    From now on, you will stop moving your humanoid limbs around and use
+    only the keyboard to progress further.
+
+- type: nobutton
+
+- type: code
+  empty: true
+  text: >
+    Hit Ctrl-Enter (Cmd-Enter on Mac) to continue.
+
+- type: code
+  empty: true
+  text: >
+    That could have been an accident. Do it again.
+
+- type: text
+  text: >
+    I see you are a fast learner. Ha ha ha.
+
+- type: text
+  text: >
+    Do not smile. You are not really a fast learner.
+
+- type: text
+  text: >
+    Any further smiling will be deducted from your monthly monetary
+    allowance.
+
+- type: clear
+
+- type: text
+  text: >
+    In the first part of your evaluation, you will be required
+    to answer questions by using the answer command.
+
+- type: text
+  text: >
+    For example, if I was to ask you what you are, here is what
+    you would type.
+  sample: >
+    answer 'a puny human'
+
 - type: code
   text: >
-    Communicate your understanding by typing: answer 'yes'
+    Do you get it?
   hints:
     - "You have to type this exactly: answer 'yes', and click Next."
   code: |
@@ -39,21 +90,14 @@
 
 - type: text
   text: >
-    Good. From now on, any answer shall be given in this form.
+    Good. Continue to your first assignment. We have lost too much
+    time on useless things already.
 
 - type: clear
 
 - type: text
   text: >
     Here is your first assignment.
-
-- type: text
-  text: >
-    Remember that your answer has to be given in the form of code.
-
-- type: text
-  text: >
-    Good luck.
 
 - type: code
   text: >
@@ -146,10 +190,12 @@
 - type: code
   text: >
     The more you have it, the less you see. What is it?
+  hint:
+    - It is not a disease.
   code: |
     _question = new SimpleQuestion {
       correct: [ 'darkness', 'the dark', 'dark' ]
-      smartass: [ 'blindness' ]
+      smartass: [ 'blindness', 'cataract', 'cecity' ]
     }
 
     answer = (x) -> _question.answer(x)
@@ -165,7 +211,7 @@
 - type: text
   text: >
     Which, after all, is expected of you. Darkness is a familiar concept
-    to you humans, with your puny sensorial devices.
+    to you humans, with your subpar sensorial devices.
 
 - type: save
   code: bombardier
@@ -257,10 +303,10 @@
     _condition = ->
       log = new Log()
 
-      left = new Door(log, '@left')
+      left = new Door(log, 'left')
       left.locked = true
 
-      right = new Door(log, '@right')
+      right = new Door(log, 'right')
       right.trapped = true
 
       return log.run =>
@@ -305,9 +351,9 @@
     You will find below an example of conditional.
   sample: |
     if human
-      worthless
+        worthless
     else
-      worthy
+        worthy
 
 - type: text
   text: >
@@ -375,8 +421,8 @@
       for i in [0, 1]
         log = new Log()
 
-        left = new Door(log, '@left')
-        right = new Door(log, '@right')
+        left = new Door(log, 'left')
+        right = new Door(log, 'right')
         xzoor = new Guard(log, 'xzoor')
 
         if i == 0
@@ -399,66 +445,106 @@
 
       { message: "Your code is correct.", advance: true }
 
-- type: end
-  text: >
-
-- type: stopper
-
 - type: text
   text: >
+    Now for the first real challenge.
+
+- type: clear
+
+- type: save
+  code: pueblo
 
 - type: text
   text: >
     Two doors: '@left', and '@right'. One of them leads to redemption.
-    One to eternal damnation. Two guards, '@ted' and '@larry'.
+    One to eternal damnation. Two guards, '@xzoor' and '@xena'.
     One of them always lies, the other always tells the truth.
-    You can ask the guards two questions: 'isDoor' and 'isTrue'.
+    You can ask the guards two questions: 'isTrapped' and 'isTrue'.
 
 - type: text
   text: >
-    For example, if you wanted to ask @ted if he thinks the door to
-    the left leads to redemption, you could type '@ted.isDoor(@left)'.
-
-- type: text
-  text: >
-    Of course, since you don't know who is lying, that would be futile.
+    Of course, since you don't know who is lying, it is not as simple
+    as it looks.
 
 - type: code
   text: >
-    Now listen closely: I want you to write a program that evaluates
-    to true if the right door is.. the right one, and false if the right
-    door leads to damnation. Go on, try it!
+    Write a program that enters the correct door every time.
   code: |
     class Guard
-      constructor: (@lying) ->
-      
-      isDoor: (door) ->
-        @isTrue door.life
+      constructor: (@log, @name, @lying) ->
+
+      isTrapped: (door) ->
+        @log.append "You asked #{@name} if door #{door.name} was trapped."
+        result = door.trapped
+        if @lying
+          result = !result
+
+        if result
+          @log.append "#{@name} said yes."
+        else
+          @log.append "#{@name} said no."
+        result
 
       isTrue: (truth) ->
+        @log.append "You asked #{@name} if something was true."
+
+        result = truth
         if @lying
-          !truth
+          result = !result
+
+        if result
+          @log.append "#{@name} said yes."
         else
-          truth
+          @log.append "#{@name} said no."
+        result
 
     class Door
-      constructor: (@life) ->
+      constructor: (@log, @name, @trapped) ->
+        @entered = false
+        @locked = !@trapped
+
+      unlock: ->
+        @log.append "You unlocked door #{@name}."
+        @locked = false
+
+      enter: ->
+        if @locked
+          @log.append "You tried to enter door #{@name}, but it was locked."
+        else if @trapped
+          @log.append "Door #{@name} was trapped, and you died horribly."
+          @log.fail()
+        else
+          @entered = true
+          @log.append "You entered door #{@name}."
+          @log.succeed()
+
+    enter = (door) ->
+      door.enter()
+
+    unlock = (door) ->
+      door.unlock()
 
     _condition = ->
-      successes = 0
-
       for i in [0, 1]
         for j in [0, 1]
+          log = new Log()
           context = {
-            left:  new Door(i == 0)
-            right: new Door(i == 1)
-            ted:   new Guard(j == 0)
-            larry: new Guard(j == 1)
+            left:  new Door(log, "left",  i == 0)
+            right: new Door(log, "right", i == 1)
+            xzoor: new Guard(log, "xzoor", j == 0)
+            xena:  new Guard(log, "xena",  j == 1)
           }
-          response = _challenge context
 
-          if context.right.life == response
-            successes += 1
+          response = log.run =>
+            _challenge context
 
-      _respond(successes, 4)
+          unless log.successful()
+            return response
+
+      { message: "You pass. For now.", advance: true }
+
+- type: end
+  text: >
+
+- type: stopper
 

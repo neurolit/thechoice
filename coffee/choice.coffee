@@ -1,3 +1,15 @@
+`
+/**
+ * Well hello there!
+ *
+ * If you're reading this, you're either trying to cheat,
+ * in which case, shame on you - or you're trying to fork this
+ * project to make your own questions in which case, welcome!
+ *
+ * Just make sure your work is unique though. M'kay?
+ */
+`
+
 class Controls
 
   constructor: (@dialog) ->
@@ -6,23 +18,28 @@ class Controls
     @tries = 0
     @hintNumber = 0
 
-    @button = $('.submit')
     @setupEditor()
     @fetchCards()
+
+    @prelude = ""
 
   setupEditor: ->
     @editor = ace.edit("editor")
     @editor.setTheme("ace/theme/tomorrow_night")
     @editor.setFontSize(16)
-    @editor.renderer.setShowGutter(false)
     @editor.renderer.updateCursor("url('cursor-caret.png')")
     @editor.getSession().setMode("ace/mode/coffee")
+    @editor.commands.addCommand {
+      name: 'submit'
+      bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'}
+      exec: (editor) => @submit()
+      readOnly: true
+    }
 
   fetchCards: ->
     jsyaml = window.jsyaml
-    $.get 'cards.yml', (data) =>
+    $.get 'cards.yml?v1', (data) =>
       @cards = jsyaml.load(data)
-      console.log "Cards loaded!"
       @setupEvents()
 
       if window.location.hash == ""
@@ -30,6 +47,7 @@ class Controls
       else
         code = window.location.hash.substring(1)
         # load cheat
+        @button.hide()
         for card, i in @cards
           if card.type == 'save' && card.code == code
             @index = i
@@ -58,9 +76,13 @@ class Controls
         @put @card.text
         @editor.focus()
       when 'text'
-        @say @card.text
+        @say @prelude + @card.text
+        @prelude = ""
         if @card.sample
           @editor.setValue(@card.sample)
+      when 'nobutton'
+          @button.hide()
+          @nextCard()
       when 'save'
         @nextCard()
       when 'end'
@@ -72,6 +94,7 @@ class Controls
         @silent text
 
   setupEvents: ->
+    @button = $('.submit')
     @button.click =>
       @submit()
 
@@ -80,10 +103,12 @@ class Controls
       when 'text'
         @nextCard()
       when 'code'
-        @submitCode()
+        if @card.empty == true
+          @nextCard()
+        else
+          @submitCode()
 
   submitCode: ->
-    console.log 'submitCode!'
     input = @editor.getValue().trim()
     if input == ''
       @say 'Well? Type something!'
@@ -92,17 +117,17 @@ class Controls
 
     input = input.split("\n").map((x) -> '  ' + x).join("\n")
     code = BASECODE + "\n_usercode = ->\n" + input + "\n\n" + @card.code + "\nreturn _condition()"
-    console.log code
 
     try
       js = CoffeeScript.compile(code)
       result = eval(js)
 
       if result.message
-        @say result.message
         if result.advance == true
+          @prelude = result.message + ' '
           @nextCard()
         else
+          @say result.message
           @fail()
         return
 
@@ -135,7 +160,7 @@ class Controls
       @silent "Hint: #{@card.hints[@hintNumber - 1]}"
 
   say: (msg) ->
-    @dialog.push("Man", msg)
+    @dialog.push("EEM", msg)
 
   put: (msg) ->
     @dialog.instruct(msg)
@@ -261,18 +286,22 @@ class Log
     @summary()
 
   successful: ->
-    !@failed && @succeded
+    if @failed
+      return false
+    unless @succeeded
+      return false
+    true
 
   summary: ->
     message = @entries.join(" ")
     if @failed
       {
-        message: message
+        message: message + " Try again."
         advance: false
       }
     else if !@succeeded
       {
-        message: message + " You did not succeed."
+        message: message + " You did not complete the task. Try again."
         advance: false
       }
     else
