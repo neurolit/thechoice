@@ -124,13 +124,13 @@ class Controls
 
   fail: ->
     @tries++
-    if @tries >= (@hintNumber + 1) * 3
+    if @tries >= (@hintNumber + 1) * 5
       @showHint()
 
   showHint: ->
     @hintNumber++
     if @card.hints && @card.hints.length >= @hintNumber
-      @say "Here's a hint. #{@card.hints[@hintNumber - 1]}"
+      @silent "Hint: #{@card.hints[@hintNumber - 1]}"
 
   say: (msg) ->
     @dialog.push("Man", msg)
@@ -260,9 +260,14 @@ class Log
 
   summary: ->
     message = @entries.join(" ")
-    if @failed || !@succeeded
+    if @failed
       {
         message: message
+        advance: false
+      }
+    else if !@succeeded
+      {
+        message: message + " You did not succeed."
         advance: false
       }
     else

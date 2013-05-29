@@ -56,14 +56,6 @@
 
 - type: text
   text: >
-    If you are struggling, hints will be given to you.
-
-- type: text
-  text: >
-    Remember that you are of little value to the intergalactic government.
-
-- type: text
-  text: >
     Good luck.
 
 - type: code
@@ -71,6 +63,7 @@
     It is more useless than you. What is it?
   hints:
     - The answer fits in one word.
+    - Remember that you are of little value to the intergalactic government.
   code: |
     _question = new SimpleQuestion {
       correct: [ 'nothing', 'nobody', 'null', 'nil', 'zilch', 'nada', '' ]
@@ -143,19 +136,15 @@
       _challenge {}
       _question.react()
 
-- type: text
-  text: >
-    Good.
-
 - type: clear
 
 - type: text
   text: >
-    We shall begin testing your programming abilities soon.
+    Good. We shall begin testing your programming abilities soon.
 
 - type: text
   text: >
-    In the meantime, you are required to answer the following question.
+    Before we do so, you are required to answer the following question.
 
 - type: code
   text: >
@@ -192,21 +181,13 @@
 
 - type: text
   text: >
-    Follow instructions very carefully, as any discrepancies could 
-    result in intergalactic instability.
-
-- type: text
-  text: >
     For the purpose of this exercise, we have summoned an
     interdimensional door. Its name is '@door'.
 
-- type: text
-  text: >
-    To pass to the next level, enter the door. You can enter
-    doors by doing: 'enter @door'
-
 - type: code
   text: Enter the door.
+  hints:
+    - "You can enter doors by doing: enter @door"
   code: |
     class Door
       constructor: ->
@@ -229,24 +210,20 @@
 
       _respond(1, 1)
 
-- type: text
-  text: >
-    Good.
+- type: clear
 
 - type: save
   code: vodka
 
 - type: text 
   text: >
-    For the next exercise, you will have two doors: @left and @right.
-    Try entering either and see what happens.
+    Good. For the next exercise, you will have two doors: @left and @right.
 
 - type: code 
   text: >
-    Make your way to the next level.
+    Try entering either door and see what happens.
   hints:
-    - "Your code can span multiple lines, that is: you can take several actions."
-    - "You can unlock doors with the command `unlock`."
+    - "Doors can be unlocked."
   code: |
     class Door
       constructor: (@log, @name) ->
