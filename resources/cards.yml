@@ -219,6 +219,11 @@
   text: >
     Good. For the next exercise, you will have two doors: @left and @right.
 
+- type: text
+  text: >
+    Should you fail, the level will be reset. You can take multiple actions:
+    just write them on several lines.
+
 - type: code 
   text: >
     Try entering either door and see what happens.
