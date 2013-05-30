@@ -1,14 +1,12 @@
-`
-/**
- * Well hello there!
- *
- * If you're reading this, you're either trying to cheat,
- * in which case, shame on you - or you're trying to fork this
- * project to make your own questions in which case, welcome!
- *
- * Just make sure your work is unique though. M'kay?
- */
-`
+###
+Well hello there!
+
+If you're reading this, you're either trying to cheat,
+in which case, shame on you - or you're trying to fork this
+project to make your own questions in which case, welcome!
+
+Just make sure your work is unique though. M'kay?
+###
 
 class Controls
 
@@ -123,8 +121,22 @@ class Controls
       @fail()
       return
 
+    # start with base code
+    code = BASECODE
+
+    @card.extensions ||= []
+    for ext in @card.extensions
+      code += "\n\n" + EXTENSIONS[ext]
+
+
+    # add player code
     input = input.split("\n").map((x) -> '  ' + x).join("\n")
-    code = BASECODE + "\n_usercode = ->\n" + input + "\n\n" + @card.code + "\nreturn _condition()"
+    code += "\n\n_usercode = ->\n" + input
+
+    # add card custom code
+    code += "\n\n" + @card.code + "\nreturn _condition()"
+
+    console.log code
 
     try
       js = CoffeeScript.compile(code)
@@ -217,7 +229,7 @@ $ ->
   dialog = new Dialog()
   controls = new Controls(dialog)
 
-BASECODE = """
+BASECODE = '''
 _challenge = (context) ->
   _usercode.apply(context)
 
@@ -238,6 +250,10 @@ _randomKey = ->
 
 class SimpleQuestion
   constructor: (@definition) ->
+    @definition.correct  ||= []
+    @definition.wrongdir ||= []
+    @definition.smartass ||= []
+
     @correct = false
     @answered = false
     @smartass = false
@@ -253,6 +269,10 @@ class SimpleQuestion
       @correct = true
       return
 
+    if @definition.wrongdir.indexOf(text) != -1
+      @wrongdir = true
+      return
+
     if @definition.smartass.indexOf(text) != -1
       @smartass = true
       return
@@ -263,8 +283,10 @@ class SimpleQuestion
         _respond 1, 1
       else if @smartass
         _retort 'We do not find this amusing. You are immediately required to stop fooling around.'
+      else if @wrongdir
+        _retort 'You are looking in all the wrong places.'
       else
-        _retort 'This is not the correct answer.'
+        _retort "You answered #{@lastAnswer}. This is not the correct answer."
     else
       _retort 'You did not answer anything.'
 
@@ -329,5 +351,86 @@ class Log
         advance: true
       }
     
-"""
+'''
+
+EXTENSIONS = {}
+
+EXTENSIONS.ship = '''
+class Stage
+  constructor: (@log) ->
+    @stations = {}
+
+  getStation: (name) ->
+    @stations[name]
+
+class Vehicle
+  constructor: (@log, @stage, @station) ->
+    @passengers = []
+
+  fly: (stationName) ->
+    if @passengers.length == 0
+      @log.append "You tried to fly a vehicle with no passengers."
+      @log.append "It got lost in the void of space."
+      @log.fail()
+
+    dest = @stage.getStation(stationName)
+    if dest
+      if dest == @station
+        @log.append "You tried to fly a vehicle to the same place it already was."
+        @log.fail()
+
+      @log.append
+      @station = dest
+      @unload()
+    else
+      @log.append "You commanded a vehicle to go to station #{@stationName}."
+      @log.append "The vehicle did not find that station, and got lost in space."
+      @log.fail()
+
+  unload: ->
+    for p in @passengers
+      p.unload()
+    @passengers = []
+
+class Station
+  constructor: (@log, @stage, @name) ->
+    @stage.stations[@name] = @
+    @crowd = []
+
+  crowdedness: ->
+    @crowd.length
+
+  enter: (numan) ->
+    @crowd.push(numan)
+
+  exit: (numan) ->
+    i = @crowd.indexOf(numan)
+    if i != -1
+      @crowd.splice(i, 1)
+
+class Numan
+  constructor: (@log, @name, @station) ->
+    @vehicle = null
+    @station.enter(@)
+    
+  board: (vehicle) ->
+    @station.exit(@)
+    if @vehicle
+      @log.append "You told numan #{@name} to board a vehicle, but he was already boarded."
+      @log.fail()
+
+    unless vehicle.station == @station 
+      @log.append "You told numan #{@name} to board a vehicle in a different station."
+      @log.fail()
+
+    vehicle.passengers.push(@)
+    @vehicle = vehicle
+    @log.append "Numan #{@name} boarded."
+
+  unload: ->
+    @station = @vehicle.station
+    @station.enter(@)
+    @vehicle = null
+    @log.append "Numan #{@name} arrived at station #{@station.name}."
+'''
 

@@ -75,7 +75,7 @@
   text: >
     Do you get it?
   hints:
-    - "You have to type this exactly: answer 'yes', and click Next."
+    - "You do not really have a choice here."
   code: |
     _question = new SimpleQuestion {
       correct: [ 'yes' ]
@@ -652,6 +652,9 @@
 - type: code
   text: >
     Write a program that enters the correct door every time.
+  hints:
+    - Do not try to find out who is lying.
+    - You can nest questions.
   code: |
     class Guard
       constructor: (@log, @name, @lying) ->
@@ -724,10 +727,111 @@
           unless log.successful()
             return response
 
-      { message: "You pass. For now.", advance: true }
+      { message: "Finally.", advance: true }
+
+- type: text
+  text: >
+    You are really pushing your luck here, humanoid.
+
+- type: text
+  text: >
+    The government will not tolerate wasteful usage of
+    resources. Pay more attention to what you are writing.
+
+- type: clear
+
+- type: save
+  code: ship
+
+- type: text
+  text: >
+    Take a look around.
+
+- type: text
+  text: >
+    You are now in space station #5092.
+
+- type: text
+  text: >
+    On your right is a government approved transport vehicle,
+    revision 4. It has a capacity of two.
+
+- type: text
+  text: >
+    In front of you, on other other side of this chasm, station #2098.
+
+- type: text
+  text: >
+    On your left, four numans. They will obey your directives
+    to the letter.
+
+- type: text
+  text: >
+    Numans have no will.
+
+- type: text
+  text: >
+    Numans have no names.
+
+- type: text
+  text: >
+    Numans are numbered: 0, 1, 2, 3.
+
+- type: text
+  text: >
+    Numans will board the vehicle when told to. Like so.
+  sample: |
+    @numans[0].board(@vehicle)
+
+- type: text
+  text: >
+    You can commandeer the vehicle to fly over to another
+    station. Like so.
+  sample: |
+    @numans[0].board(@vehicle)
+    @vehicle.fly('#2098')
+
+- type: text
+  text: > 
+    After crossing, the vehicle will unload its passengers.
+
+- type: text
+  text: > 
+    At least one passenger is required for vehicle operation.
+
+- type: code
+  text: > 
+    Write a program to carry all four numans to station #2098.
+  extensions:
+    - ship
+  code: |
+    _condition = ->
+      log = new Log()
+      stage = new Stage(log)
+
+      src = new Station(log, stage, "#5092")
+      dst = new Station(log, stage, "#2098")
+
+      numans = []
+      for i in [0..3]
+        numans[i] = new Numan(log, "#{i}", src)
+
+      vehicle = new Vehicle(log, stage, src)
+
+      return log.run =>
+        context = {
+            numans: numans
+            vehicle: vehicle
+        } 
+        _challenge context
+
+        if dst.crowdedness() != 4
+          log.append 'You did not bring all numans to destination.'
+          log.fail()
+        else
+          log.succeed()
 
 - type: end
-  text: >
 
 - type: stopper
 
