@@ -61,6 +61,7 @@ class Controls
     @showCard()
 
   showCard: ->
+    @focus()
     @card = @cards[@index]
     if @card.type == 'code'
       $('.scene').addClass('code')
@@ -70,16 +71,15 @@ class Controls
     switch @card.type
       when 'clear'
         @dialog.clear()
-        @editor.setValue('')
+        @fill ''
         @nextCard()
       when 'code'
         @put @card.text
-        @editor.focus()
       when 'text'
         @say @prelude + @card.text
         @prelude = ""
         if @card.sample
-          @editor.setValue(@card.sample)
+          @fill @card.sample
       when 'nobutton'
           @button.hide()
           @nextCard()
@@ -92,6 +92,14 @@ class Controls
         Thanks for playing!
         """
         @silent text
+
+  focus: ->
+    @editor.blur()
+    @editor.focus()
+
+  fill: (value) ->
+    @editor.setValue(value)
+    @editor.clearSelection()
 
   setupEvents: ->
     @button = $('.submit')
@@ -219,14 +227,25 @@ _respond = (successes, total) ->
 _retort = (message) ->
   { message: message }
 
+_pick = (arr) ->
+  arr[Math.floor(Math.random() * (arr.length - 1))]
+
+_randomKey = ->
+  key = ""
+  key += _pick ['jafa', 'domi', 'lake', 'jijo', 'rami']
+  key += _pick ['wika', 'bijo', 'noka', 'krei', 'plaz']
+  key
+
 class SimpleQuestion
   constructor: (@definition) ->
     @correct = false
     @answered = false
     @smartass = false
+    @lastAnswer = ""
 
   answer: (raw) ->
     text = raw.toLowerCase().trim()
+    @lastAnswer = text
 
     @answered = true
 

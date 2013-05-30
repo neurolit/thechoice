@@ -195,7 +195,7 @@
   code: |
     _question = new SimpleQuestion {
       correct: [ 'darkness', 'the dark', 'dark' ]
-      smartass: [ 'blindness', 'cataract', 'cecity' ]
+      wrongdir: [ 'blindness', 'cataract', 'cecity' ]
     }
 
     answer = (x) -> _question.answer(x)
@@ -214,7 +214,7 @@
     to you humans, with your subpar sensorial devices.
 
 - type: save
-  code: bombardier
+  code: firstdoor
 
 - type: clear
 
@@ -256,7 +256,7 @@
 - type: clear
 
 - type: save
-  code: vodka
+  code: twodoors
 
 - type: text 
   text: >
@@ -340,7 +340,162 @@
 - type: clear
 
 - type: save
-  code: redbull
+  code: secret
+
+- type: text
+  text: >
+    The door in this exercise is slightly different from the previous doors.
+
+- type: text
+  text: >
+    This one requires a key to be unlocked.
+
+- type: text
+  text: >
+    You are now required to pass two values to the unlock command.
+  sample: |
+    unlock door, key
+
+- type: text
+  text: >
+    The key for this one is 'jabberwocky'.
+
+- type: code
+  text: >
+    Enter the door.
+  code: |
+    class Door
+      constructor: (@log, @name, @key) ->
+        @locked = true
+        @entered = false
+
+      unlock: (key) ->
+        if key == @key
+          @log.append "You unlocked door #{@name} thanks to key '#{@key}'."
+          @locked = false
+        else
+          @log.append "You tried to unlock #{@name}, but the key was incorrect."
+
+      enter: ->
+        if @locked
+          @log.append "You tried to enter door #{@name}, but it was locked."
+        else
+          @log.append "You entered door #{@name}."
+          @log.succeed()
+          @entered = true
+
+    enter = (door) ->
+      door.enter()
+
+    unlock = (door, key) ->
+      door.unlock(key)
+
+    _condition = ->
+      log = new Log()
+
+      door = new Door(log, 'door', 'jabberwocky')
+      log.run =>
+        context = {
+            door: door
+        }      
+        _challenge context
+
+- type: text
+  text: >
+    I thought you would never get it.
+
+- type: text
+  text: >
+    I have no idea why the government bothers with devices of your
+    kind.
+
+- type: text
+  text: >
+    So much ego.
+    
+- type: text
+  text: >
+    So little memory.
+
+- type: clear
+
+- type: save
+  code: randomsecret
+
+- type: text
+  text: >
+    The key to the door is now randomized on each try.
+
+- type: text
+  text: >
+    @xzoor can give you the key to @door, if you ask him.
+
+- type: text
+  sample: |
+    guard.askKey(door)
+  text: >
+    Here's the syntax to ask for a key. It might require some minor
+    modifications.
+
+- type: text
+  text: >
+    Use the key the guard gives you to unlock the door.
+
+- type: code
+  text: >
+    Enter the door.
+  code: |
+    class Guard
+      constructor: (@log, @name) ->
+
+      askKey: (door) ->
+        result = door.key
+        @log.append "You asked #{@name} for the key to #{door.name}. The result was: #{result}."
+        result
+
+    class Door
+      constructor: (@log, @name, @key) ->
+        @locked = true
+        @entered = false
+
+      unlock: (key) ->
+        if key == @key
+          @log.append "You unlocked door #{@name} thanks to key '#{@key}'."
+          @locked = false
+        else
+          @log.append "You tried to unlock #{@name}, but the key was incorrect."
+
+      enter: ->
+        if @locked
+          @log.append "You tried to enter door #{@name}, but it was locked."
+        else
+          @log.append "You entered door #{@name}."
+          @log.succeed()
+          @entered = true
+
+    enter = (door) ->
+      door.enter()
+
+    unlock = (door, key) ->
+      door.unlock(key)
+
+    _condition = ->
+      log = new Log()
+
+      door = new Door(log, 'door', _randomKey())
+      guard = new Guard(log, 'xzoor')
+      log.run =>
+        context = {
+            door: door
+            xzoor: guard
+        }      
+        _challenge context
+
+
+- type: clear
+
+- type: save
+  code: conditionals
 
 - type: text
   text: >
@@ -348,21 +503,49 @@
 
 - type: text
   text: >
-    You will find below an example of conditional.
+    You will find below an example of conditional. Look at it carefully.
   sample: |
-    if human
-        worthless
-    else
-        worthy
+    # ask a question
+    if @subject.isType('machine')
+        # if true, the program will do this
+        answer 'worthy'
 
 - type: text
   text: >
-    Your code must now be satisfying in every possible case.
+    You will find below another example of conditional, which is more accurate.
+  sample: |
+    # ask a question
+    if @subject.isType('machine')
+        # if true, the program will do this
+        answer 'worthy'
+    else
+        # otherwise it will do this
+        laugh()
+        answer 'worthless'
+
+- type: text
+  text: >
+    The lines starting with the character '#' are only here because
+    you are too primitive to understand the instructions without them.
+
+- type: text
+  text: >
+    Here. Now they are gone.
+  sample: |
+    if @subject.isType('machine')
+        answer 'worthy'
+    else
+        laugh()
+        answer 'worthless'
 
 - type: text
   text: >
     The stage for this assignment contains two doors as well. However,
     each possible combination will be tested against your code.
+
+- type: text
+  text: >
+    Your code must now be satisfying in every possible case.
 
 - type: text
   text: >
@@ -452,7 +635,7 @@
 - type: clear
 
 - type: save
-  code: pueblo
+  code: lying
 
 - type: text
   text: >
