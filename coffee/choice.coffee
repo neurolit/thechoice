@@ -16,6 +16,10 @@ class Controls
     @tries = 0
     @hintNumber = 0
 
+    @box = $('.box')
+    @box.hide()
+    @boxBody = @box.find('.box-body')
+
     @setupEditor()
     @fetchCards()
 
@@ -25,7 +29,6 @@ class Controls
     @editor = ace.edit("editor")
     @editor.setTheme("ace/theme/tomorrow_night")
     @editor.setFontSize(16)
-    @editor.renderer.updateCursor("url('cursor-caret.png')")
     @editor.getSession().setMode("ace/mode/coffee")
     @editor.commands.addCommand {
       name: 'submit'
@@ -85,7 +88,7 @@ class Controls
         @nextCard()
       when 'end'
         text = """
-        That's it for now. Tell me what you think about it
+        To be continued... Tell me what you think about it
         by <a href="https://twitter.com/intent/tweet?text=@nddrylliog I just played The Choice and here's what I think: " target="_blank">sending me a tweet.</a>
         Thanks for playing!
         """
@@ -104,7 +107,27 @@ class Controls
     @button.click =>
       @submit()
 
+    $(window).keypress (ev) =>
+      if (ev.which == 10) || (ev.which == 13)
+        if @hideBox()
+          ev.preventDefault()
+          return false
+      true
+
+  hideBox: ->
+    if @box.is(':visible')
+      @box.fadeOut()
+      true
+    else
+      false
+
+  showBox: ->
+    @box.fadeIn()
+
   submit: ->
+    if @hideBox()
+      return
+
     switch @card.type
       when 'text'
         @nextCard()
@@ -149,6 +172,19 @@ class Controls
         else
           @say result.message
           @fail()
+        return
+
+      if result.box == true
+        if result.advance == true
+          @nextCard()
+        else
+          $list = $('<ul></ul>')
+          for e in result.elements
+            $elem = $("<li>#{e}</li>")
+            $elem.appendTo($list)
+          @boxBody.html('')
+          $list.appendTo(@boxBody)
+          @showBox()
         return
 
       if result.successes == result.total
@@ -244,8 +280,8 @@ _pick = (arr) ->
 
 _randomKey = ->
   key = ""
-  key += _pick ['jafa', 'domi', 'lake', 'jijo', 'rami']
-  key += _pick ['wika', 'bijo', 'noka', 'krei', 'plaz']
+  key += _pick ['thal', 'domi', 'lake', 'jijo', 'rami', 'zana', 'lojr', 'baso', 'zola']
+  key += _pick ['wika', 'bijo', 'noka', 'krei', 'plaz', 'xxuf', 'yowm', 'gaho', 'lipl']
   key
 
 class SimpleQuestion
@@ -298,6 +334,7 @@ class Log
     @entries = []
     @failed = false
     @succeded = false
+    @box = true
 
   append: (entry) ->
     @entries.push entry
@@ -334,21 +371,22 @@ class Log
     true
 
   summary: ->
-    message = @entries.join(" ")
     if @failed
-      {
-        message: message + " Try again."
-        advance: false
-      }
+      @append 'Try again.'
     else if !@succeeded
+      @append 'You did not complete the tasks. Try again.'
+
+    if @box
       {
-        message: message + " You did not complete the task. Try again."
-        advance: false
+        box: true
+        elements: @entries
+        advance: @successful()
       }
     else
+      message = @entries.join(" ")
       {
         message: message
-        advance: true
+        advance: @successful()
       }
     
 '''
@@ -379,12 +417,10 @@ class Vehicle
         @log.append "You tried to fly a vehicle to the same place it already was."
         @log.fail()
 
-      @log.append
       @station = dest
       @unload()
     else
-      @log.append "You commanded a vehicle to go to station #{@stationName}."
-      @log.append "The vehicle did not find that station, and got lost in space."
+      @log.append "You tried to fly to station #{stationName} which doesn't exist."
       @log.fail()
 
   unload: ->
@@ -425,7 +461,6 @@ class Numan
 
     vehicle.passengers.push(@)
     @vehicle = vehicle
-    @log.append "Numan #{@name} boarded."
 
   unload: ->
     @station = @vehicle.station

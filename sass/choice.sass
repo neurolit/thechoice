@@ -7,7 +7,7 @@
 body
   height: 100%
   background: rgb(26, 25, 25)
-  cursor: url('cursor-hand.png') 4 2
+  cursor: url('cursor-hand.png') 2 0
   overflow: hidden
 
 body
@@ -21,9 +21,6 @@ body
   height: 100%
   top: 0
   left: 0
-
-.ace_content
-  cursor: url('cursor-caret.png') 16 16
 
 .dialog
   padding: 20px
@@ -42,6 +39,29 @@ body
   color: #999
   box-shadow: 0 0 60px black
   background-color: black
+
+  .box
+    padding: 20px
+    overflow-y: scroll
+
+    position: absolute
+    top:    10px
+    left:   40px
+    right:  40px
+    bottom: 10px
+
+    background-color: rgba(0, 0, 0, 0.9)
+    box-shadow: 0 0 10px white
+
+    z-index: 10
+
+    h2
+      font-variant: small-caps
+      margin-top: 0
+
+    .box-body
+      ul
+        list-style-image: url('hexagon-w16.png')
 
   .scene
     position: relative

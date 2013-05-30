@@ -434,8 +434,18 @@
   sample: |
     guard.askKey(door)
   text: >
-    Here's the syntax to ask for a key. It might require some minor
-    modifications.
+    Here's the syntax to ask for a key.
+
+- type: text
+  text: >
+    If you do not store the response of a guard, it is lost.
+
+- type: text
+  text: >
+    Store information so that they don't get lost.
+  sample: |
+    # after that line, 'key' will be the response of the guard
+    key = guard.askKey(door)
 
 - type: text
   text: >
@@ -745,11 +755,7 @@
 
 - type: text
   text: >
-    Take a look around.
-
-- type: text
-  text: >
-    You are now in space station #5092.
+    Take a look around.  You are now in space station #5092.
 
 - type: text
   text: >
@@ -758,7 +764,7 @@
 
 - type: text
   text: >
-    In front of you, on other other side of this chasm, station #2098.
+    In front of you, station #3127.
 
 - type: text
   text: >
@@ -789,7 +795,7 @@
     station. Like so.
   sample: |
     @numans[0].board(@vehicle)
-    @vehicle.fly('#2098')
+    @vehicle.fly('#0000')
 
 - type: text
   text: > 
@@ -799,9 +805,13 @@
   text: > 
     At least one passenger is required for vehicle operation.
 
+- type: text
+  text: > 
+    At no time shall you enter the vehicle. You shall remain in station #5092
+
 - type: code
   text: > 
-    Write a program to carry all four numans to station #2098.
+    Write a program to carry all four numans to station #3127.
   extensions:
     - ship
   code: |
@@ -810,7 +820,7 @@
       stage = new Stage(log)
 
       src = new Station(log, stage, "#5092")
-      dst = new Station(log, stage, "#2098")
+      dst = new Station(log, stage, "#3127")
 
       numans = []
       for i in [0..3]
@@ -826,7 +836,8 @@
         _challenge context
 
         if dst.crowdedness() != 4
-          log.append 'You did not bring all numans to destination.'
+          remain = 4 - dst.crowdedness()
+          log.append "#{remain} numans still need to be transported."
           log.fail()
         else
           log.succeed()
