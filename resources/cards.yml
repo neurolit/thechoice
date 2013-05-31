@@ -189,7 +189,7 @@
 
 - type: code
   text: >
-    The more you have it, the less you see. What is it?
+    The more of it you have, the less you see. What is it?
   hint:
     - It is not a disease.
   code: |
@@ -354,7 +354,7 @@
   text: >
     You are now required to pass two values to the unlock command.
   sample: |
-    unlock door, key
+    unlock @door, @key
 
 - type: text
   text: >
@@ -432,7 +432,7 @@
 
 - type: text
   sample: |
-    guard.askKey(door)
+    @guard.askKey(@door)
   text: >
     Here's the syntax to ask for a key.
 
@@ -445,7 +445,7 @@
     Store information so that they don't get lost.
   sample: |
     # after that line, 'key' will be the response of the guard
-    key = guard.askKey(door)
+    key = @guard.askKey(@door)
 
 - type: text
   text: >
